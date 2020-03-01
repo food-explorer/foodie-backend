@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './loaders/mongooseLoader';
 import routes from './routes/index';
 import config from './config';
+import logger from './loaders/logger';
 
 const app = express();
 
@@ -16,9 +17,9 @@ app.use(routes);
 connectDB()
   .then(() => {
     app.listen(config.PORT, () => {
-      console.log('server started at', config.PORT);
+      logger.log('info', `Server started on port ${config.PORT}`);
     });
   })
   .catch((error) => {
-    console.log('Unable to start app', error);
+    logger.log('error', error);
   });
