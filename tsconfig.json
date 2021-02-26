@@ -10,11 +10,12 @@
     "sourceMap": true,
     "outDir": "build",
     "baseUrl": ".",
+    "types": [],
     "paths": {
       "*": [
         "node_modules/*",
-      ]
+      ],
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }

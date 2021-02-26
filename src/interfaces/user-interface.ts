@@ -1,4 +1,4 @@
-import User from "../database/models/user.model";
+import User from '../database/models/user.model';
 
 export interface IUser {
   email: string;
@@ -7,7 +7,6 @@ export interface IUser {
   image?: string;
   following: User[];
 }
-
 
 export interface IProfile {
   username: string;
