@@ -2,8 +2,11 @@ import Joi from 'joi';
 
 const register = {
   body: Joi.object().keys({
+    username: Joi.string().required(),
     email: Joi.string().required().email(),
-    name: Joi.string().required(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    password: Joi.string().required(),
   }),
 };
 

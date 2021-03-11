@@ -5,6 +5,8 @@ export interface IUser {
   username: string;
   bio?: string;
   image?: string;
+  firstName: string;
+  lastName: string;
   following: User[];
 }
 

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import passport from 'passport';
+import IUserModel, { User } from '../database/models/user.model';
 import ApiError from '../utilities/ApiError';
 import httpStatus from 'http-status';
-
 
 // ISSUE: How does this work with the trailing (req, res, next)?
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,4 +23,26 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   })(req, res, next);
 };
 
-export { login };
+const register = async (req: Request, res: Response, next: NextFunction) => {
+  const user: IUserModel = new User();
+
+  const { username, email, password, firstName, lastName } = req.body;
+
+  user.username = username;
+  user.email = email;
+  user.firstName = firstName;
+  user.lastName = lastName;
+
+  user.setPassword(password);
+  user.bio = '';
+  user.image = '';
+
+  try {
+    await user.save();
+    return res.json({ status: true, data: user.toAuthJSON() });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export { login, register };

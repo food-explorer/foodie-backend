@@ -1,36 +1,34 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
-import { authentication } from "../utilities/authentication";
+import { authentication } from '../utilities/authentication';
 
 const router: Router = Router();
 
 /**
  * GET /api/user
  */
-router.get('/user', authentication.required, (req: Request, res: Response, next: NextFunction) => {
-
-    User
-      .findById(req.payload.id)
+router.get(
+  '/user',
+  authentication.required,
+  (req: Request, res: Response, next: NextFunction) => {
+    User.findById(req.payload.id)
       .then((user: IUserModel) => {
-          res.status(200).json({user: user.toAuthJSON()});
-        }
-      )
+        res.status(200).json({ user: user.toAuthJSON() });
+      })
       .catch(next);
-
   }
 );
-
 
 /**
  * PUT /api/user
  */
-router.put('/user', authentication.required, (req: Request, res: Response, next: NextFunction) => {
-
-    User
-      .findById(req.payload.id)
+router.put(
+  '/user',
+  authentication.required,
+  (req: Request, res: Response, next: NextFunction) => {
+    User.findById(req.payload.id)
       .then((user: IUserModel) => {
-
         if (!user) {
           return res.sendStatus(401);
         }
@@ -54,34 +52,11 @@ router.put('/user', authentication.required, (req: Request, res: Response, next:
         }
 
         return user.save().then(() => {
-          return res.json({user: user.toAuthJSON()});
+          return res.json({ user: user.toAuthJSON() });
         });
       })
       .catch(next);
   }
 );
-
-
-/**
- * POST /api/users
- */
-router.post('/users', (req: Request, res: Response, next: NextFunction) => {
-
-  const user: IUserModel = new User();
-
-  user.username = req.body.user.username;
-  user.email    = req.body.user.email;
-  user.setPassword(req.body.user.password);
-  user.bio   = '';
-  user.image = '';
-
-  return user.save()
-    .then(() => {
-      return res.json({user: user.toAuthJSON()});
-    })
-    .catch(next);
-
-});
-
 
 export const UsersRoutes: Router = router;

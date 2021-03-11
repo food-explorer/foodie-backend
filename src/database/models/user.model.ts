@@ -10,7 +10,6 @@ export default interface IUserModel extends IUser, Document {
   token?: string;
   favorites: [Schema.Types.ObjectId];
 
-
   generateJWT(): string;
   toAuthJSON(): any;
   setPassword(password: string): void;
@@ -37,6 +36,14 @@ const UserSchema = new Schema<IUserModel>(
       required: [true, "can't be blank"],
       match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
       index: true,
+    },
+    firstName: {
+      type: Schema.Types.String,
+      required: [true, "can't be blank"],
+    },
+    lastName: {
+      type: Schema.Types.String,
+      required: [true, "can't be blank"],
     },
     email: {
       type: Schema.Types.String,
@@ -112,6 +119,8 @@ UserSchema.methods.toAuthJSON = function (): any {
   return {
     username: this.username,
     email: this.email,
+    firstName: this.firstName,
+    lastName: this.lastName,
     token: this.generateJWT(),
     bio: this.bio,
     image: this.image,
@@ -150,7 +159,7 @@ UserSchema.methods.isFavorite = function (id: string) {
 };
 
 // UserSchema.methods.follow = function (id: string) {
-  
+
 //   if (this.following.indexOf(id) === -1) {
 //     this.following.push(id);
 //   }
