@@ -3,6 +3,7 @@ import passport from 'passport';
 import IUserModel, { User } from '../database/models/user.model';
 import ApiError from '../utilities/ApiError';
 import httpStatus from 'http-status';
+import { generateForgotPasswordToken } from '../service/auth.service';
 
 // ISSUE: How does this work with the trailing (req, res, next)?
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,4 +46,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { login, register };
+const forgotPassword = (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.body;
+  const token = generateForgotPasswordToken(email);
+  // send email with token
+  return res.json({
+    status: true,
+    message: 'Please check your email address for reset password link',
+  });
+};
+export { login, register, forgotPassword };

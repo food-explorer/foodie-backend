@@ -17,4 +17,11 @@ const login = {
   }),
 };
 
-export { register, login };
+const forgotPassword = {
+  body: Joi.object().keys({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+};
+
+export { register, login, forgotPassword };
