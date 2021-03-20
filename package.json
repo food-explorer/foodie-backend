@@ -33,7 +33,7 @@
     "@types/express-serve-static-core": "4.17.8",
     "@types/hapi__joi": "^17.1.6",
     "@types/helmet": "0.0.47",
-    "@types/jsonwebtoken": "^8.5.0",
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/lodash": "^4.14.168",
     "@types/mongodb": "^3.6.8",
     "@types/mongoose": "^5.10.3",

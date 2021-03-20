@@ -13,6 +13,13 @@ interface GenerateTokenProps {
   secret?: string;
 }
 
+type TokenPayload = {
+  sub: string;
+  iat: number;
+  exp: number;
+  type: 'RESET_PASSWORD' | 'AUTH';
+};
+
 const generateToken = (data: GenerateTokenProps) => {
   const { userId, expires, type, secret = JWT_SECRET } = data;
 
@@ -23,6 +30,29 @@ const generateToken = (data: GenerateTokenProps) => {
     type,
   };
   return jwt.sign(payload, secret);
+};
+
+/**
+ * Verify token and return token doc (or throw an error if it is not valid)
+ * @param {string} token
+ * @param {string} type
+ * @returns {Promise<Token>}
+ */
+const verifyToken = async (token: string, type: 'RESET_PASSWORD' | 'AUTH') => {
+  const payload = jwt.verify(token, JWT_SECRET) as TokenPayload;
+  if (!payload) {
+    throw new Error('Invalid Token');
+  }
+  const tokenDoc = await Token.findOne({
+    token,
+    type,
+    user: payload.sub,
+    blacklisted: false,
+  });
+  if (!tokenDoc) {
+    throw new Error('Token not found');
+  }
+  return tokenDoc;
 };
 
 const saveToken = async (data: IToken) => {
@@ -59,4 +89,18 @@ const generateForgotPasswordToken = async (email: string) => {
   return forgotPasswordToken;
 };
 
-export { generateForgotPasswordToken };
+const resetPassword = async (newPassword: string, token: string) => {
+  try {
+    const resetPasswordTokenDoc = await verifyToken(token, 'RESET_PASSWORD');
+    const user = await User.findById(resetPasswordTokenDoc.userId);
+    if (!user) {
+      throw new Error();
+    }
+    await Token.deleteMany({ userId: user.id, type: 'RESET_PASSWORD' });
+    user.setPassword(newPassword);
+  } catch (error) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Password reset failed');
+  }
+};
+
+export { generateForgotPasswordToken, verifyToken, resetPassword };

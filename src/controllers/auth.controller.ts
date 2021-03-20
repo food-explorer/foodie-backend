@@ -3,7 +3,7 @@ import passport from 'passport';
 import IUserModel, { User } from '../database/models/user.model';
 import ApiError from '../utilities/ApiError';
 import httpStatus from 'http-status';
-import { generateForgotPasswordToken } from '../service/auth.service';
+import { authService } from '../service';
 
 // ISSUE: How does this work with the trailing (req, res, next)?
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -48,11 +48,29 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const forgotPassword = (req: Request, res: Response, next: NextFunction) => {
   const { email } = req.body;
-  const token = generateForgotPasswordToken(email);
-  // send email with token
+  const token = authService.generateForgotPasswordToken(email);
+  console.log(
+    '🚀 ~ file: auth.controller.ts ~ line 52 ~ forgotPassword ~ token',
+    token
+  );
+  // TODO: send email with token
   return res.json({
     status: true,
     message: 'Please check your email address for reset password link',
   });
 };
-export { login, register, forgotPassword };
+
+const resetPassword = async (req: Request, res: Response) => {
+  await authService.resetPassword(
+    req.body.newPassword,
+    req.query.token as string
+  );
+
+  // TODO: send email of password reset to user
+  res.status(httpStatus.OK).send({
+    status: true,
+    message: 'Password reset successfully',
+  });
+};
+
+export { login, register, forgotPassword, resetPassword };
