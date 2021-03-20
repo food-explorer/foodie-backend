@@ -1,41 +1,41 @@
 import { Application, Request, Response } from 'express';
-import { IS_PRODUCTION } from "./secrets";
-import logger from "./logger";
+import { IS_PRODUCTION } from './secrets';
+import logger from './logger';
+import mongoose from 'mongoose';
+import ApiError from './ApiError';
+import httpStatus from 'http-status';
 
 export function loadErrorHandlers(app: Application) {
-
   // catch 404 errors and forward to error handler
   app.use((req, res, next) => {
-
-    interface BetterError extends Error {
-      status?: number;
-    }
-
-    const err: BetterError = new Error('Not Found');
-    err.status             = 404;
-    next(err);
+    const fourOhFourError = new ApiError(
+      httpStatus.NOT_FOUND,
+      'Route does not exist'
+    );
+    next(fourOhFourError);
   });
 
   app.use((err: any, req: Request, res: Response, next: any) => {
-
-    if (err.name === 'ValidationError') {
-      return res.status(422).json({
-        errors: Object.keys(err.errors).reduce(function (errors: any, key: string) {
-          errors[key] = err.errors[key].message;
-
-          return errors;
-        }, {})
-      });
+    let error = err;
+    if (!(error instanceof ApiError)) {
+      const statusCode =
+        error.statusCode || error instanceof mongoose.Error
+          ? httpStatus.BAD_REQUEST
+          : httpStatus.INTERNAL_SERVER_ERROR;
+      const message = error.message || httpStatus[statusCode];
+      error = new ApiError(statusCode, message, false, err.stack);
     }
-
-    logger.error(err);
-    res.status(err.status || 500);
-    res.json({
-      errors: {
-        message: err.message,
-        error  : !IS_PRODUCTION ? err : {}
-      }
-    });
+    next(error);
   });
 
+  app.use((err: any, req: Request, res: Response, next: any) => {
+    const { statusCode, message } = err;
+    const response = {
+      status: false,
+      message: message,
+    };
+
+    logger.error(err);
+    res.status(statusCode).send(response);
+  });
 }
