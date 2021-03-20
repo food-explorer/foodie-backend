@@ -40,7 +40,7 @@ const verifyToken = async (token: string, type: 'RESET_PASSWORD' | 'AUTH') => {
   const tokenDoc = await Token.findOne({
     token,
     type,
-    user: payload.sub,
+    userId: payload.sub,
     blacklisted: false,
   });
   if (!tokenDoc) {
@@ -53,7 +53,7 @@ const saveToken = async (data: IToken) => {
   const { token, userId, type, blacklisted, expires } = data;
   const tokenDoc = await Token.create({
     token,
-    user: userId,
+    userId,
     expires: expires.toDate(),
     type,
     blacklisted,
@@ -61,4 +61,4 @@ const saveToken = async (data: IToken) => {
   return tokenDoc;
 };
 
-export { saveToken, generateToken, verifyToken }
+export { saveToken, generateToken, verifyToken };

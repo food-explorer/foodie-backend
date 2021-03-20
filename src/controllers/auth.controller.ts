@@ -16,9 +16,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       user.token = user.generateJWT();
       return res.json({ status: true, data: user.toAuthJSON() });
     } else {
-      return new ApiError(
+      throw new ApiError(
         httpStatus.UNPROCESSABLE_ENTITY,
-        'User does not exist'
+        'Invalid username or password'
       );
     }
   })(req, res, next);

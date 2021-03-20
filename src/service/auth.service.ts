@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import ApiError from '../utilities/ApiError';
 import { User } from '../database/models/user.model';
 import { Token } from '../database/models/token.model';
-import { tokenService } from '.';
+import { verifyToken, generateToken, saveToken } from './token.service';
 
 
 
@@ -14,16 +14,16 @@ const generateForgotPasswordToken = async (email: string) => {
   }
 
   const expires = moment().add('60', 'minutes');
-  const forgotPasswordToken = tokenService.generateToken({
+  const forgotPasswordToken = generateToken({
     userId: user._id,
     type: 'RESET_PASSWORD',
     expires,
   });
 
-  tokenService.saveToken({
+  await saveToken({
     token: forgotPasswordToken,
     expires,
-    userId: user.id,
+    userId: user._id,
     type: 'RESET_PASSWORD',
   });
   return forgotPasswordToken;
@@ -31,13 +31,14 @@ const generateForgotPasswordToken = async (email: string) => {
 
 const resetPassword = async (newPassword: string, token: string) => {
   try {
-    const resetPasswordTokenDoc = await tokenService.verifyToken(token, 'RESET_PASSWORD');
+    const resetPasswordTokenDoc = await verifyToken(token, 'RESET_PASSWORD');
     const user = await User.findById(resetPasswordTokenDoc.userId);
     if (!user) {
       throw new Error();
     }
-    await Token.deleteMany({ userId: user.id, type: 'RESET_PASSWORD' });
     user.setPassword(newPassword);
+    await user.save();
+    await Token.deleteMany({ userId: user.id, type: 'RESET_PASSWORD' });
   } catch (error) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Password reset failed');
   }

@@ -96,8 +96,8 @@ UserSchema.methods.validPassword = function (this, password: string): boolean {
 UserSchema.methods.setPassword = function (password: string) {
   this.salt = crypto.randomBytes(16).toString('hex');
   this.hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
-    .toString('hex');
+  .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
+  .toString('hex');
 };
 
 UserSchema.methods.generateJWT = function (): string {
