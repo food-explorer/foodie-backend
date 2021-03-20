@@ -19,9 +19,17 @@ const login = {
 
 const forgotPassword = {
   body: Joi.object().keys({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
+    email: Joi.string().required(),
+  }),
+  query: Joi.object().keys({
+    clay: Joi.string().required()
+  })
+};
+
+const resetPassword = {
+  body: Joi.object().keys({
+    newPassword: Joi.string().required(),
   }),
 };
 
-export { register, login, forgotPassword };
+export { register, login, forgotPassword, resetPassword };

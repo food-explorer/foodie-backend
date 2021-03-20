@@ -40,7 +40,7 @@ const resetPassword = async (newPassword: string, token: string) => {
     await user.save();
     await Token.deleteMany({ userId: user.id, type: 'RESET_PASSWORD' });
   } catch (error) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Password reset failed');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Password reset failed');
   }
 };
 
