@@ -39,6 +39,7 @@ const resetPassword = async (newPassword: string, token: string) => {
     user.setPassword(newPassword);
     await user.save();
     await Token.deleteMany({ userId: user.id, type: 'RESET_PASSWORD' });
+    return user;
   } catch (error) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Password reset failed');
   }
