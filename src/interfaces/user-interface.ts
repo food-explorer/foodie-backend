@@ -7,7 +7,8 @@ export interface IUser {
   image?: string;
   firstName: string;
   lastName: string;
-  following: User[];
+  header?: string;
+  // following: User[];
 }
 
 export interface IProfile {
@@ -16,3 +17,11 @@ export interface IProfile {
   image: string;
   following: boolean;
 }
+
+
+export type ITokenPayload = {
+  id: string;
+  username: string;
+  exp: number;
+  iat: number
+};

@@ -15,7 +15,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (user) {
-      user.token = user.generateJWT();
       return res.json({ status: true, data: user.toAuthJSON() });
     } else {
       throw new ApiError(
@@ -37,9 +36,10 @@ const register = catchAsync(
     user.firstName = firstName;
     user.lastName = lastName;
 
-    user.setPassword(password);
+    user.setPassword(password); 
     user.bio = '';
     user.image = '';
+    user.header = '';
     await user.save();
     return res.json({ status: true, data: user.toAuthJSON() });
   }

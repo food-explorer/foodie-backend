@@ -2,13 +2,15 @@ import { Document, Model, model, Schema, Types } from 'mongoose';
 import { IUser } from '../../interfaces/user-interface';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
+import dayjs from 'dayjs';
 import { JWT_SECRET } from '../../utilities/secrets';
 import mongooseUniqueValidator = require('mongoose-unique-validator');
-import { ObjectID, ObjectId } from 'mongodb';
+import { ObjectID } from 'mongodb';
 
 export default interface IUserModel extends IUser, Document {
   token?: string;
-  favorites: [Schema.Types.ObjectId];
+  favorites: [ObjectID];
+  following: [ObjectID];
 
   generateJWT(): string;
   toAuthJSON(): any;
@@ -101,15 +103,12 @@ UserSchema.methods.setPassword = function (password: string) {
 };
 
 UserSchema.methods.generateJWT = function (): string {
-  const today = new Date();
-  const exp = new Date(today);
-  exp.setDate(today.getDate() + 60);
-
+  const exp = dayjs().add(2, 'days').valueOf();
   return jwt.sign(
     {
       id: this._id,
       username: this.username,
-      exp: exp.getTime() / 1000,
+      exp: exp,
     },
     JWT_SECRET
   );
@@ -127,18 +126,19 @@ UserSchema.methods.toAuthJSON = function (): any {
   };
 };
 
-UserSchema.methods.toProfileJSONFor = function (user: IUserModel) {
+UserSchema.methods.toProfileJSONFor = function () {
   return {
     username: this.username,
     bio: this.bio,
+    header: this.header,
     image:
       this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
-    following: user ? user.isFollowing(this._id) : false,
+    following: this ? this.isFollowing(this._id) : false,
   };
 };
 
 UserSchema.methods.favorite = function (id: string) {
-  const convertedId = new Schema.Types.ObjectId(id);
+  const convertedId = new ObjectID(id);
   if (this.favorites.indexOf(convertedId) === -1) {
     this.favorites.push(convertedId);
   }
@@ -147,7 +147,7 @@ UserSchema.methods.favorite = function (id: string) {
 };
 
 UserSchema.methods.unfavorite = function (id: string) {
-  const convertedId = new Schema.Types.ObjectId(id);
+  const convertedId = new ObjectID(id);
   this.favorites.filter((item) => item !== convertedId);
   return this.save();
 };
@@ -158,17 +158,16 @@ UserSchema.methods.isFavorite = function (id: string) {
   });
 };
 
-// UserSchema.methods.follow = function (id: string) {
-
-//   if (this.following.indexOf(id) === -1) {
-//     this.following.push(id);
-//   }
-
-//   return this.save();
-// };
+UserSchema.methods.follow = function (id: string) {
+  const convertedId = new ObjectID(id);
+  if (this.following.indexOf(convertedId) === -1) {
+    this.following.push(convertedId);
+  }
+  return this.save();
+};
 
 UserSchema.methods.unfollow = function (id: string) {
-  const convertedId = new Schema.Types.ObjectId(id);
+  const convertedId = new ObjectID(id);
   this.favorites.filter((item) => item !== convertedId);
   return this.save();
 };

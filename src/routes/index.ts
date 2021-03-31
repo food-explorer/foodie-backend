@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { TagRoutes } from './tag-routes';
-import { UsersRoutes } from './users-routes';
+import { UsersRoutes } from './users.routes';
 import { ProfilesRoutes } from './profiles-routes';
 import { ArticlesRoutes } from './articles-routes';
 import { AuthRoutes } from './auth.routes';

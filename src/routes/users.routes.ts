@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import IUserModel, { User } from '../database/models/user.model';
 import passport from 'passport';
-import { authentication } from '../utilities/authentication';
+import { authentication, jwtAuthenticate } from '../utilities/authentication';
+import { viewUser, followUser } from '../controllers/user.controller';
 
 const router: Router = Router();
 
@@ -58,5 +59,9 @@ router.put(
       .catch(next);
   }
 );
+
+router.get('/user/:username', jwtAuthenticate, viewUser);
+
+router.post('/user/:username/follow', jwtAuthenticate, followUser);
 
 export const UsersRoutes: Router = router;
