@@ -61,7 +61,6 @@ export const jwtAuthenticate = async (req: Request, res: Response, next: NextFun
       throw new Error('Invalid Token, please sign in again');
     }
 
-    req.userId = payload.id;
     req.profile = user;
     next();
   } catch (error) {

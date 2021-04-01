@@ -48,4 +48,22 @@ const followUser = async (username: string, user: IUserModel) => {
   }
 };
 
-export { viewUser, followUser };
+const unfollowUser = async (username: string, user: IUserModel) => {
+  try {
+    const foundUser = await User.findOne({ username });
+    if (!foundUser) {
+      throw new Error(`Unable to find user: ${username}, please try again`);
+    }
+    if (username === user.username) {
+      throw new Error('Invalid request');
+    }
+    await user.unfollow(foundUser.id);
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      error.message || 'Unable to process request, please try again'
+    );
+  }
+};
+
+export { viewUser, followUser, unfollowUser };
