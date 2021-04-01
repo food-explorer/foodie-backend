@@ -36,7 +36,7 @@ const register = catchAsync(
     user.firstName = firstName;
     user.lastName = lastName;
 
-    user.setPassword(password); 
+    user.setPassword(password);
     user.bio = '';
     user.image = '';
     user.header = '';

@@ -2,6 +2,56 @@ import IUserModel, { User } from '../database/models/user.model';
 import ApiError from '../utilities/ApiError';
 import httpStatus from 'http-status';
 
+const getProfile = async (profile: IUserModel) => {
+  try {
+    const { image, header, bio, firstName, lastName } = profile;
+    // get the persons 10 most recent posts;
+    return {
+      username: profile.username,
+      firstName,
+      lastName,
+      image,
+      header,
+      bio,
+    };
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Invalid Request, please try again'
+    );
+  }
+};
+
+const updateProfile = async (
+  profile: IUserModel,
+  body: { firstName?: string; lastName?: string; bio?: string }
+) => {
+  try {
+    const user = await User.findOne({ username: profile.username });
+    Object.keys(body).forEach((item: 'firstName' | 'lastName' | 'bio') => {
+      console.log(body[item]);
+      user[item] = body[item];
+    });
+
+    await user.save();
+
+    const { image, header, bio, firstName, lastName } = user;
+    return {
+      username: profile.username,
+      firstName,
+      lastName,
+      image,
+      header,
+      bio,
+    };
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Unable to find user, please try again`
+    );
+  }
+};
+
 const viewUser = async (username: string, profile: IUserModel) => {
   try {
     const foundUser = await User.findOne({ username });
@@ -66,4 +116,4 @@ const unfollowUser = async (username: string, user: IUserModel) => {
   }
 };
 
-export { viewUser, followUser, unfollowUser };
+export { viewUser, followUser, unfollowUser, getProfile, updateProfile };

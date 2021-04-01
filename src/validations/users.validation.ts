@@ -22,8 +22,8 @@ const forgotPassword = {
     email: Joi.string().required(),
   }),
   query: Joi.object().keys({
-    clay: Joi.string().required()
-  })
+    clay: Joi.string().required(),
+  }),
 };
 
 const resetPassword = {
@@ -32,4 +32,13 @@ const resetPassword = {
   }),
 };
 
-export { register, login, forgotPassword, resetPassword };
+const updateUser = {
+  body: Joi.object().keys({
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    location: Joi.string(),
+    bio: Joi.string(),
+  }),
+};
+
+export { register, login, forgotPassword, resetPassword, updateUser };
