@@ -49,7 +49,11 @@ const auth = {
   }),
 };
 
-export const jwtAuthenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const jwtAuthenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = getTokenFromHeader(req);
     const payload = jsonWebTokn.verify(token, JWT_SECRET) as ITokenPayload;
@@ -64,7 +68,7 @@ export const jwtAuthenticate = async (req: Request, res: Response, next: NextFun
     req.profile = user;
     next();
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 };
 

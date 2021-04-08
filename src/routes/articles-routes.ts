@@ -125,19 +125,19 @@ router.get(
       }
 
       Promise.all([
-        Article.find({ author: { $in: user.following } })
-          .limit(Number(limit))
-          .skip(Number(offset))
-          .populate("author")
-          .exec(),
-        Article.count({ author: { $in: user.following } }),
+        // Article.find({ author: { $in: user.following } })
+        //   .limit(Number(limit))
+        //   .skip(Number(offset))
+        //   .populate("author")
+        //   .exec(),
+        // Article.count({ author: { $in: user.following } }),
       ])
         .then(function (results) {
           const articles = results[0];
           const articlesCount = results[1];
 
           return res.json({
-            articles: articles.map(function (article) {
+            articles: articles.map(function (article: any) {
               return article.toJSONFor(user);
             }),
             articlesCount: articlesCount,

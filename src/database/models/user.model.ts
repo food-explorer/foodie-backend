@@ -67,7 +67,7 @@ const UserSchema = new Schema<IUserModel>(
     favorites: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Article',
+        ref: 'Post',
       },
     ],
     following: [
@@ -129,6 +129,8 @@ UserSchema.methods.toAuthJSON = function (): any {
 UserSchema.methods.toProfileJSONFor = function () {
   return {
     username: this.username,
+    firstName: this.firstName,
+    lastName: this.lastName,
     bio: this.bio,
     header: this.header,
     image:
