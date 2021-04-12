@@ -1,5 +1,5 @@
 import { Post } from '../database/models/post.model';
-import IUserModel, { User } from '../database/models/user.model';
+import IUserModel from '../database/models/user.model';
 
 const fetchAll = async (query: {}, limit: string) => {
   const posts = await Post.find(query)

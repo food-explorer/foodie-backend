@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 import dayjs from 'dayjs';
 import { JWT_SECRET } from '../../utilities/secrets';
 import mongooseUniqueValidator = require('mongoose-unique-validator');
-import { ObjectID } from 'mongodb';
+import { ObjectID, ObjectId } from 'mongodb';
 
 export default interface IUserModel extends IUser, Document {
   token?: string;
@@ -20,8 +20,8 @@ export default interface IUserModel extends IUser, Document {
   isFollowing(id: string): boolean;
   follow(id: string): Promise<IUser>;
   unfollow(id: string): Promise<IUser>;
-  favorite(id: string): Promise<IUser>;
-  unfavorite(id: string): Promise<IUser>;
+  favorite(id: ObjectId): Promise<IUser>;
+  unfavorite(id: ObjectId): Promise<IUser>;
   isFavorite(id: string): boolean;
 
   salt: string;
@@ -139,18 +139,18 @@ UserSchema.methods.toProfileJSONFor = function () {
   };
 };
 
-UserSchema.methods.favorite = function (id: string) {
-  const convertedId = new ObjectID(id);
-  if (this.favorites.indexOf(convertedId) === -1) {
-    this.favorites.push(convertedId);
+UserSchema.methods.favorite = function (id: ObjectId) {
+  if (this.favorites.indexOf(id) === -1) {
+    this.favorites.push(id);
   }
 
   return this.save();
 };
 
-UserSchema.methods.unfavorite = function (id: string) {
-  const convertedId = new ObjectID(id);
-  this.favorites.filter((item) => item !== convertedId);
+UserSchema.methods.unfavorite = function (id: ObjectId) {
+  console.log('🚀 ~ file: user.model.ts ~ line 152 ~ res', id)
+  const res = this.favorites.filter((item) => item !== id);
+  this.favorites.forEach(item => console.log(item));
   return this.save();
 };
 

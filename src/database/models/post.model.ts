@@ -96,7 +96,7 @@ PostSchema.pre<PostModel>('validate', function (next) {
 
 PostSchema.methods.updateFavoriteCount = function () {
   const post = this;
-  return User.count({ favorites: { $in: [post._id] } }).then(function (
+  return User.countDocuments({ favorites: { $in: [post._id] } }).then(function (
     count
   ) {
     post.favoritesCount = count;

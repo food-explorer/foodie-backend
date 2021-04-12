@@ -49,4 +49,28 @@ const fetchPost = async (req: Request, res: Response) => {
     data,
   });
 };
-export { fetchAll, createPost, fetchPost };
+
+const favoritePost = async (req: Request, res: Response) => {
+  const { profile, post } = req;
+  await profile.favorite(post._id);
+  await post.updateFavoriteCount();
+
+  res.status(httpStatus.OK).send({
+    status: true,
+    data: post.toJSONFor(profile),
+  });
+};
+
+const unFavoritePost = async (req: Request, res: Response) => {
+  const { profile, post } = req;
+  console.log('🚀 ~ file: post.controller.ts ~ line 66 ~ unFavoritePost ~ post', post._id)
+  await profile.unfavorite(post._id);
+  await post.updateFavoriteCount();
+
+  res.status(httpStatus.OK).send({
+    status: true,
+    data: post.toJSONFor(profile),
+  });
+};
+
+export { fetchAll, createPost, fetchPost, favoritePost, unFavoritePost };

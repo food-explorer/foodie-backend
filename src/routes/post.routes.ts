@@ -31,5 +31,7 @@ router.post(
   validate(postValidation.createPost),
   postController.createPost
 );
+router.post('/:post/favorite', jwtAuthenticate, postController.favoritePost);
+router.post('/:post/unfavorite', jwtAuthenticate, postController.unFavoritePost);
 
 export const PostRoutes = router;
