@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import { postService } from '../service';
 import catchAsync from '../utilities/catchAsync';
 import { User } from '../database/models/user.model';
-import { Post } from '../database/models/post.model';
+import { Comment } from '../database/models/comment.model';
 
 const fetchAll = catchAsync(async (req: Request, res: Response) => {
   const query: any = {};
@@ -63,7 +63,6 @@ const favoritePost = async (req: Request, res: Response) => {
 
 const unFavoritePost = async (req: Request, res: Response) => {
   const { profile, post } = req;
-  console.log('🚀 ~ file: post.controller.ts ~ line 66 ~ unFavoritePost ~ post', post._id)
   await profile.unfavorite(post._id);
   await post.updateFavoriteCount();
 
@@ -73,4 +72,40 @@ const unFavoritePost = async (req: Request, res: Response) => {
   });
 };
 
-export { fetchAll, createPost, fetchPost, favoritePost, unFavoritePost };
+const postComment = catchAsync(async (req: Request, res: Response) => {
+  const { profile, post, body } = req;
+
+  const comment = new Comment(body.comment);
+  comment.author = profile;
+  comment.post = post;
+  await comment.save();
+
+  post.comments.push(comment);
+  await post.save();
+
+  res.status(httpStatus.OK).send({
+    status: true,
+    data: comment.toJSONFor(profile),
+  });
+});
+
+const fetchComments = catchAsync(async (req: Request, res: Response) => {
+  const { post } = req;
+
+  const comments = post.comments;
+
+  res.status(httpStatus.OK).send({
+    status: true,
+    data: comments,
+  });
+});
+
+export {
+  fetchAll,
+  createPost,
+  fetchPost,
+  favoritePost,
+  unFavoritePost,
+  postComment,
+  fetchComments
+};

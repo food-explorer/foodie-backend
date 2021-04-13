@@ -29,7 +29,6 @@ const updateProfile = async (
   try {
     const user = await User.findOne({ username: profile.username });
     Object.keys(body).forEach((item: 'firstName' | 'lastName' | 'bio') => {
-      console.log(body[item]);
       user[item] = body[item];
     });
 

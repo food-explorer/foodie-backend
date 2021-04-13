@@ -339,7 +339,7 @@ router.post(
         }
 
         const comment = new Comment(req.body.comment);
-        comment.article = req.article;
+        // comment.article = req.article;
         comment.author = user;
 
         return comment.save().then(function () {

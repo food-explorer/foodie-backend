@@ -32,6 +32,12 @@ router.post(
   postController.createPost
 );
 router.post('/:post/favorite', jwtAuthenticate, postController.favoritePost);
-router.post('/:post/unfavorite', jwtAuthenticate, postController.unFavoritePost);
+router.post(
+  '/:post/unfavorite',
+  jwtAuthenticate,
+  postController.unFavoritePost
+);
+router.post('/:post/comment', jwtAuthenticate, postController.postComment);
+router.get('/:post/comments', jwtAuthenticate, postController.fetchComments);
 
 export const PostRoutes = router;

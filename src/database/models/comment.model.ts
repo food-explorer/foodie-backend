@@ -16,9 +16,9 @@ const CommentSchema = new Schema<ICommentModel>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    article: {
+    post: {
       type: Schema.Types.ObjectId,
-      ref: 'Article',
+      ref: 'Post',
     },
   },
   { timestamps: true }
