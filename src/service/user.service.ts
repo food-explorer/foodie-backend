@@ -4,12 +4,11 @@ import httpStatus from 'http-status';
 
 const getProfile = async (profile: IUserModel) => {
   try {
-    const { image, header, bio, firstName, lastName } = profile;
+    const { image, header, bio } = profile;
     // get the persons 10 most recent posts;
     return {
       username: profile.username,
-      firstName,
-      lastName,
+      name,
       image,
       header,
       bio,
@@ -24,21 +23,20 @@ const getProfile = async (profile: IUserModel) => {
 
 const updateProfile = async (
   profile: IUserModel,
-  body: { firstName?: string; lastName?: string; bio?: string }
+  body: { name: string; bio?: string }
 ) => {
   try {
     const user = await User.findOne({ username: profile.username });
-    Object.keys(body).forEach((item: 'firstName' | 'lastName' | 'bio') => {
+    Object.keys(body).forEach((item: 'name' | 'bio') => {
       user[item] = body[item];
     });
 
     await user.save();
 
-    const { image, header, bio, firstName, lastName } = user;
+    const { image, header, bio, name } = user;
     return {
       username: profile.username,
-      firstName,
-      lastName,
+      name,
       image,
       header,
       bio,
@@ -57,14 +55,13 @@ const viewUser = async (username: string, profile: IUserModel) => {
     if (!foundUser) {
       throw new Error(`Unable to find user: ${username}, please try again`);
     }
-    const { image, header, bio, firstName, lastName } = foundUser;
+    const { image, header, bio, name } = foundUser;
     const following = profile.isFollowing(foundUser.id);
     // get the persons 10 most recent posts;
     return {
       user: {
         username: foundUser.username,
-        firstName,
-        lastName,
+        name,
         image,
         header,
         bio,

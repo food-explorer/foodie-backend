@@ -11,6 +11,7 @@ import {
 } from '../service/email.service';
 import { OAuth2Client } from 'google-auth-library';
 import { GOOGLE_CLIENTID } from '../utilities/secrets';
+import { generateUniqueUsername } from '../utilities/authentication';
 
 const client = new OAuth2Client(
   '209004910483-n4m0ksth3jghbudtq9kleb1uhh5i9u9o.apps.googleusercontent.com'
@@ -28,7 +29,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     } else {
       throw new ApiError(
         httpStatus.UNPROCESSABLE_ENTITY,
-        'Invalid username or password'
+        'Invalid email or password'
       );
     }
   })(req, res, next);
@@ -37,12 +38,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 const register = catchAsync(async (req: Request, res: Response) => {
   const user: IUserModel = new User();
 
-  const { username, email, password, firstName, lastName } = req.body;
+  const { email, password, name } = req.body;
+
+  const username = await generateUniqueUsername(name);
 
   user.username = username;
   user.email = email;
-  user.firstName = firstName;
-  user.lastName = lastName;
+  user.name = name;
 
   user.setPassword(password);
   user.bio = '';
@@ -55,9 +57,9 @@ const register = catchAsync(async (req: Request, res: Response) => {
 const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
   const token = await authService.generateForgotPasswordToken(email);
-  const { username } = await User.findOne({ email });
+  const { name } = await User.findOne({ email });
   sendResetPasswordEmail(email, {
-    name: username,
+    name,
     link: `https://foodie.com/reset-password?token=${token}`,
   });
   return res.json({
@@ -88,13 +90,13 @@ const googleAuth = catchAsync(async (req: Request, res: Response) => {
   const { email, name, picture } = ticket.getPayload();
   const userData = await User.findOneAndUpdate(
     { email },
-    { firstName: name, lastName: name, image: picture },
+    { name, image: picture },
     { upsert: true, new: true }
   );
 
   res.status(httpStatus.OK).send({
     status: true,
-    data: {...userData.toAuthJSON(), name: userData.firstName},
+    data: userData.toAuthJSON(),
   });
 });
 export { login, register, forgotPassword, resetPassword, googleAuth };

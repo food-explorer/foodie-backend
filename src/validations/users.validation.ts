@@ -2,17 +2,15 @@ import Joi from 'joi';
 
 const register = {
   body: Joi.object().keys({
-    username: Joi.string().required(),
+    name: Joi.string().required(),
     email: Joi.string().required().email(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
     password: Joi.string().required(),
   }),
 };
 
 const login = {
   body: Joi.object().keys({
-    username: Joi.string().required(),
+    email: Joi.string().required(),
     password: Joi.string().required(),
   }),
 };
@@ -34,8 +32,8 @@ const resetPassword = {
 
 const updateUser = {
   body: Joi.object().keys({
-    firstName: Joi.string(),
-    lastName: Joi.string(),
+    name: Joi.string(),
+    username: Joi.string(),
     location: Joi.string(),
     bio: Joi.string(),
   }),

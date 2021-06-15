@@ -72,4 +72,27 @@ export const jwtAuthenticate = async (
   }
 };
 
+// TODO: Is it better to just set this variable to the returned value instead of a function?
+const generateRandomNumber = () => Math.floor(Math.random() * 1000);
+
+const generateUsername = (name: string, digit?: number) => {
+  let username = name.split(' ').join('').toLowerCase();
+  if (digit) {
+    username += digit;
+  }
+  return username;
+};
+
+export const generateUniqueUsername = async (name: string, digit?: number): Promise<string> => {
+  const generatedUsername = generateUsername(name, digit);
+  const usernameExists = await User.findOne({ username: generatedUsername });
+
+  if (usernameExists) {
+    const randomNumber = generateRandomNumber();
+    return generateUniqueUsername(generatedUsername, randomNumber);
+  } else {
+    return generatedUsername;
+  }
+}
+
 export const authentication = auth;

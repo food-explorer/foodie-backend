@@ -5,7 +5,7 @@ const fetchAll = async (query: {}, limit: string) => {
   const posts = await Post.find(query)
     .limit(Number(limit))
     .sort('createdAt')
-    .populate('author', ['username', 'firstName', 'lastName'])
+    .populate('author', ['username', 'name'])
     .exec();
 
   return posts;

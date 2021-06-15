@@ -39,11 +39,7 @@ const UserSchema = new Schema<IUserModel>(
       match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
       index: true,
     },
-    firstName: {
-      type: Schema.Types.String,
-      required: [true, "can't be blank"],
-    },
-    lastName: {
+    name: {
       type: Schema.Types.String,
       required: [true, "can't be blank"],
     },
@@ -118,8 +114,7 @@ UserSchema.methods.toAuthJSON = function (): any {
   return {
     username: this.username,
     email: this.email,
-    firstName: this.firstName,
-    lastName: this.lastName,
+    name: this.name,
     token: this.generateJWT(),
     bio: this.bio,
     image: this.image,
@@ -129,8 +124,7 @@ UserSchema.methods.toAuthJSON = function (): any {
 UserSchema.methods.toProfileJSONFor = function () {
   return {
     username: this.username,
-    firstName: this.firstName,
-    lastName: this.lastName,
+    name: this.name,
     bio: this.bio,
     header: this.header,
     image:

@@ -5,8 +5,8 @@ import passportLocal from 'passport-local';
 const LocalStrategy = passportLocal.Strategy;
 
 passport.use(
-  new LocalStrategy((username, password, done) => {
-    User.findOne({ username })
+  new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+    User.findOne({ email })
       .then((user) => {
         if (!user) {
           return done(null, false, { message: 'Incorrect email.' });
