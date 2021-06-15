@@ -28,3 +28,4 @@ export const EMAIL_PORT = process.env.EMAIL_PORT;
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 export const EMAIL_SERVICE = process.env.EMAIL_SERVICE;
 export const EMAIL_FROM = process.env.EMAIL_FROM;
+export const GOOGLE_CLIENTID = process.env.GOOGLE_CLIENTID;

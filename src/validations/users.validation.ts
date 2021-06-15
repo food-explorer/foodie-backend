@@ -41,4 +41,10 @@ const updateUser = {
   }),
 };
 
-export { register, login, forgotPassword, resetPassword, updateUser };
+const googleAuth = {
+  body: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+};
+
+export { register, login, forgotPassword, resetPassword, updateUser, googleAuth };

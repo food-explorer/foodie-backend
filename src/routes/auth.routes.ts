@@ -31,10 +31,16 @@ router.post(
 /**
  * POST /api/auth/reset-password
  */
- router.post(
+router.post(
   '/reset-password',
   validate(userValidation.resetPassword),
   authController.resetPassword
+);
+
+router.post(
+  '/google',
+  validate(userValidation.googleAuth),
+  authController.googleAuth
 );
 
 export const AuthRoutes = router;
